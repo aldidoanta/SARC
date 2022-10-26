@@ -5,6 +5,8 @@ nltk.download('vader_lexicon')
 from eval import parse
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from sklearn.linear_model import LogisticRegressionCV as LogitCV
+from sklearn.metrics import *
+from sklearn.naive_bayes import GaussianNB
 from text_embedding.vectors import *
 from utils import *
 
@@ -87,4 +89,10 @@ def main():
     print('\tTrain acc: ', (train_pred_labels == train_expect_labels).sum() / train_pred_labels.shape[0])
     print('\tTest acc: ', (test_pred_labels == test_expect_labels).sum() / test_pred_labels.shape[0])
 
+    # Evaluate classifier using NaiveBayes
+    gnb = GaussianNB()
+    gnb.fit(train_all_docs_sentiment, train_all_labels)
+    y_predict = gnb.predict(test_all_docs_sentiment)
+    print('GaussianNB accuracy: ', accuracy_score(test_all_labels, y_predict))
+    print('GaussianNB f-1 score: ', f1_score(test_all_labels, y_predict))
 main()
