@@ -81,7 +81,6 @@ def main():
 
     test_all_docs_emo = np.array(test_all_docs_emo)
 
-    print(test_all_docs_emo)
     # Evaluate this classifier on all responses.
     print('Evaluate the classifier on all responses')
     clf = LogitCV(Cs=[10**i for i in range(-2, 3)], fit_intercept=False, cv=2, dual=np.less(*train_all_docs_emo.shape), solver='liblinear', n_jobs=-1, random_state=0)
