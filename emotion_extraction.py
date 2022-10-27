@@ -2,6 +2,7 @@
 from nrclex import NRCLex
 from eval import parse, preprocessing, print_evaluation_result
 from sklearn.linear_model import LogisticRegressionCV as LogitCV
+from sklearn.metrics import precision_score, recall_score, f1_score
 from text_embedding.features import *
 from text_embedding.vectors import *
 from utils import *
@@ -17,8 +18,8 @@ def main():
     test_file = SARC+'test-balanced.csv'
     comment_file = SARC+'comments.json'
 
-    all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc = extract_emotion_features(train_file, test_file, comment_file, args)
-    print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc)
+    all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1 = extract_emotion_features(train_file, test_file, comment_file, args)
+    print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1)
 
 def extract_emotion_features(train_file, test_file, comment_file, args):
     # Load SARC pol/main sequences with labels.
@@ -90,6 +91,7 @@ def extract_emotion_features(train_file, test_file, comment_file, args):
     clf.fit(train_all_docs_emo, train_all_labels)
     all_resp_train_acc = clf.score(train_all_docs_emo, train_all_labels)
     all_resp_test_acc = clf.score(test_all_docs_emo, test_all_labels)
+    predict = clf.predict(test_all_docs_emo)
 
     # Get vectors for first and second responses.
     n_tr = int(train_all_docs_emo.shape[0]/2)
@@ -106,7 +108,12 @@ def extract_emotion_features(train_file, test_file, comment_file, args):
     ori_train_acc = (train_pred_labels == train_expect_labels).sum() / train_pred_labels.shape[0]
     ori_test_acc = (test_pred_labels == test_expect_labels).sum() / test_pred_labels.shape[0]
 
-    return all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc
+    # Measure Performance
+    precision = precision_score(test_all_labels, predict)
+    recall = recall_score(test_all_labels, predict)
+    f1 = f1_score(test_all_labels, predict)
+
+    return all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1
 def extract_emo(sentence):
     emo_count = {"fear": 0, "anger": 0, "anticipation": 0, "trust": 0, "surprise": 0, "positive": 0, "negative": 0, "sadness": 0, "disgust": 0, "joy": 0}
     for word in sentence:
