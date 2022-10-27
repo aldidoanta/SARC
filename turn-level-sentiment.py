@@ -43,19 +43,16 @@ def main():
     train_labels = {i: [2*int(l[i])-1 for l in train_labels] for i in range(2)}
     test_labels = {i: [2*int(l[i])-1 for l in test_labels] for i in range(2)}
 
-    # Combine sarcastic and non-sarcastic statements into one array,
-    # both in train and test data
-    train_all_docs = train_docs[0] + train_docs[1]
-    test_all_docs = test_docs[0] + test_docs[1]
     # Combine all labels into one array, both in train and test data
     train_all_labels = np.array(train_labels[0] + train_labels[1])
     test_all_labels = np.array(test_labels[0] + test_labels[1])
 
-    # Do sentiment analysis using VADER
+    # Feature extraction using sentiment analysis (VADER) and emotional affect (NRCLex)
     train_all_docs_sentiment = []
     test_all_docs_sentiment = []
     sentiment_analyzer = SentimentIntensityAnalyzer()
 
+    # Feature extraction for train data
     for idx, sentence in enumerate(train_ancestor):
         previous_statement = sentence[len(sentence) - 1]
         first_response = train_docs[0][idx]
@@ -136,6 +133,7 @@ def main():
         ])
     train_all_docs_sentiment = np.array(train_all_docs_sentiment)
 
+    # Feature extraction for test data
     for idx, sentence in enumerate(test_ancestor):
         previous_statement = sentence[len(sentence) - 1]
         first_response = test_docs[0][idx]
