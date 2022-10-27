@@ -56,7 +56,8 @@ def extract_sentiment(train_file, test_file, comment_file):
     test_all_docs_sentiment = get_extracted_features(test_ancestor, test_docs)
 
     # plot the sentiment features
-    feature_visualization.plot_sentiment_features(train_all_docs_sentiment, train_all_labels)
+    feature_visualization.plot_sentiment_features(train_all_docs_sentiment, train_all_labels, plot_title='Training Data', marker='o')
+    feature_visualization.plot_sentiment_features(test_all_docs_sentiment, test_all_labels, plot_title='Test Data', marker='s')
 
     # Evaluate this classifier on all responses.
     clf = LogitCV(Cs=[10**i for i in range(-2, 3)], fit_intercept=False, cv=2, dual=np.less(*train_all_docs_sentiment.shape), solver='liblinear', n_jobs=-1, random_state=0)
