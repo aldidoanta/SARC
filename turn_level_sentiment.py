@@ -22,7 +22,8 @@ def main():
     test_file = SARC+'test-balanced.csv'
     comment_file = SARC+'comments.json'
 
-    extract_sentiment(train_file, test_file, comment_file)
+    all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1 = extract_sentiment(train_file, test_file, comment_file)
+    print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1)
 
 def extract_sentiment(train_file, test_file, comment_file):
     # Load SARC pol/main sequences with labels.
@@ -54,11 +55,11 @@ def extract_sentiment(train_file, test_file, comment_file):
     test_all_docs_sentiment = get_extracted_features(test_ancestor, test_docs)
 
     # Evaluate this classifier on all responses.
-    print('Evaluate the classifier on all responses')
     clf = LogitCV(Cs=[10**i for i in range(-2, 3)], fit_intercept=False, cv=2, dual=np.less(*train_all_docs_sentiment.shape), solver='liblinear', n_jobs=-1, random_state=0)
     clf.fit(train_all_docs_sentiment, train_all_labels)
-    print('\tTrain acc: ', clf.score(train_all_docs_sentiment, train_all_labels))
-    print('\tTest acc: ', clf.score(test_all_docs_sentiment, test_all_labels))
+    all_resp_train_acc = clf.score(train_all_docs_sentiment, train_all_labels)
+    all_resp_test_acc = clf.score(test_all_docs_sentiment, test_all_labels)
+    predict = clf.predict(test_all_docs_sentiment)
 
     # Get vectors for first and second responses.
     n_tr = int(train_all_docs_sentiment.shape[0]/2)
@@ -67,22 +68,29 @@ def extract_sentiment(train_file, test_file, comment_file):
     test_vecs = {i: test_all_docs_sentiment[i*n_te:(i+1)*n_te,:] for i in range(2)}
 
     # Final evaluation.
-    print('Evaluate the classifier on the original dataset')
     hyperplane = clf.coef_[0,:]
     train_pred_labels = 2*(train_vecs[0].dot(hyperplane) > train_vecs[1].dot(hyperplane))-1
     test_pred_labels = 2*(test_vecs[0].dot(hyperplane) > test_vecs[1].dot(hyperplane))-1
     train_expect_labels = train_labels[0]
     test_expect_labels = test_labels[0]
-    print('\tTrain acc: ', (train_pred_labels == train_expect_labels).sum() / train_pred_labels.shape[0])
-    print('\tTest acc: ', (test_pred_labels == test_expect_labels).sum() / test_pred_labels.shape[0])
+    ori_train_acc = (train_pred_labels == train_expect_labels).sum() / train_pred_labels.shape[0]
+    ori_test_acc = (test_pred_labels == test_expect_labels).sum() / test_pred_labels.shape[0]
 
     # Evaluate classifier using NaiveBayes
     gnb = naive_bayes.GaussianNB()
     gnb.fit(train_all_docs_sentiment, train_all_labels)
     y_predict = gnb.predict(test_all_docs_sentiment)
 
-    print('GaussianNB accuracy: ', metrics.accuracy_score(test_all_labels, y_predict))
-    print('GaussianNB f-1 score: ', metrics.f1_score(test_all_labels, y_predict))
+    GausNB_acc = metrics.accuracy_score(test_all_labels, y_predict)
+    GaussNB_f1 = metrics.f1_score(test_all_labels, y_predict)
+
+    # Measure Performance
+    precision = precision_score(test_all_labels, predict)
+    recall = recall_score(test_all_labels, predict)
+    f1 = f1_score(test_all_labels, predict)
+
+
+    return all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1
 
 def get_extracted_features(ancestors, response_docs):
     result = []
@@ -189,3 +197,7 @@ def get_emotion_score(sentence):
         'disgust': emo_count['disgust']/n_word,
         'joy': emo_count['joy']/n_word
     }
+
+if __name__ == '__main__':
+
+    main()

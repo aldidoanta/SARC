@@ -6,6 +6,7 @@ nltk.download('stopwords')
 from nltk.corpus import  stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.linear_model import LogisticRegressionCV as LogitCV
+from sklearn.metrics import precision_score, recall_score, f1_score
 from sklearn.preprocessing import normalize
 from text_embedding.features import *
 from text_embedding.vectors import *
@@ -40,11 +41,11 @@ def main():
   test_file = SARC+'test-balanced.csv'
   comment_file = SARC+'comments.json'
 
-  print_evaluation_result(extract_bong_features(train_file, test_file, comment_file, args))
+  all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1 = extract_bong_features(train_file, test_file, comment_file, args)
+  print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1)
 
 def extract_bong_features(train_file, test_file, comment_file, args):
   # Load SARC pol/main sequences with labels.
-  print('Load SARC data')
   train_seqs, test_seqs, train_labels, test_labels =\
     load_sarc_responses(train_file, test_file, comment_file, lower=args.lower)
 
@@ -99,6 +100,7 @@ def extract_bong_features(train_file, test_file, comment_file, args):
   clf.fit(train_all_vecs, train_all_labels)
   all_resp_train_acc = clf.score(train_all_vecs, train_all_labels)
   all_resp_test_acc = clf.score(test_all_vecs, test_all_labels)
+  predict = clf.predict(test_all_vecs)
 
   # Get vectors for first and second responses.
   n_tr = int(train_all_vecs.shape[0]/2)
@@ -115,9 +117,14 @@ def extract_bong_features(train_file, test_file, comment_file, args):
   ori_train_acc = (train_pred_labels == train_expect_labels).sum() / train_pred_labels.shape[0]
   ori_test_acc = (test_pred_labels == test_expect_labels).sum() / test_pred_labels.shape[0]
 
-  return all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc
+  # Measure Performance
+  precision = precision_score(test_all_labels, predict)
+  recall = recall_score(test_all_labels, predict)
+  f1 = f1_score(test_all_labels, predict)
 
-def print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc):
+  return all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1
+
+def print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc, ori_test_acc, precision, recall, f1):
   print('Evaluate the classifier on all responses')
   print('\tTrain acc: ', all_resp_train_acc)
   print('\tTest acc: ', all_resp_test_acc)
@@ -125,6 +132,12 @@ def print_evaluation_result(all_resp_train_acc, all_resp_test_acc, ori_train_acc
   print('Evaluate the classifier on the original dataset')
   print('\tTrain acc: ', ori_train_acc)
   print('\tTest acc: ', ori_test_acc)
+
+  print("Performance Metrix")
+  print("\tPrecision: ", precision)
+  print("\tRecall: ", recall)
+  print("\tF-1 Score: ", f1)
+
 
 def preprocessing(document):
   preprocessed = []
@@ -150,3 +163,7 @@ def lemmatize(documents):
   lemmatizer = WordNetLemmatizer()
   lemmatized = [lemmatizer.lemmatize(word, pos='v') for word in documents]
   return lemmatized
+
+if __name__ == '__main__':
+
+  main()
