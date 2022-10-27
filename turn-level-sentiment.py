@@ -47,12 +47,7 @@ def main():
     train_all_labels = np.array(train_labels[0] + train_labels[1])
     test_all_labels = np.array(test_labels[0] + test_labels[1])
 
-    # Feature extraction using sentiment analysis (VADER) and emotional affect (NRCLex)
-    train_all_docs_sentiment = []
-    test_all_docs_sentiment = []
-    sentiment_analyzer = SentimentIntensityAnalyzer()
-
-    # Feature extraction for train and test data
+    # Feature extraction for train and test data, using sentiment analysis (VADER) and emotional affect (NRCLex)
     train_all_docs_sentiment = get_extracted_features(train_ancestor, train_docs)
     test_all_docs_sentiment = get_extracted_features(test_ancestor, test_docs)
 
