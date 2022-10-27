@@ -52,167 +52,9 @@ def main():
     test_all_docs_sentiment = []
     sentiment_analyzer = SentimentIntensityAnalyzer()
 
-    # Feature extraction for train data
-    for idx, sentence in enumerate(train_ancestor):
-        previous_statement = sentence[len(sentence) - 1]
-        first_response = train_docs[0][idx]
-        second_response = train_docs[1][idx]
-
-        # Calculate sentiment scores
-        score_previous_statement = sentiment_analyzer.polarity_scores(previous_statement)
-        score_first_response = sentiment_analyzer.polarity_scores(first_response)
-        score_second_response = sentiment_analyzer.polarity_scores(second_response)
-
-        # Calculate emotion scores
-        emotion_score_previous_statement = get_emotion_score(get_preprocessed_sentence(previous_statement))
-        emotion_score_first_response = get_emotion_score(get_preprocessed_sentence(first_response))
-        emotion_score_second_response = get_emotion_score(get_preprocessed_sentence(second_response))
-
-        # Treat the sentiment results (values of neg, neu, pos) as learning features
-        train_all_docs_sentiment.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
-
-            score_first_response['neg'],
-            score_first_response['neu'],
-            score_first_response['pos'],
-
-            emotion_score_previous_statement['fear'],
-            emotion_score_previous_statement['anger'],
-            emotion_score_previous_statement['anticipation'],
-            emotion_score_previous_statement['trust'],
-            emotion_score_previous_statement['surprise'],
-            emotion_score_previous_statement['positive'],
-            emotion_score_previous_statement['negative'],
-            emotion_score_previous_statement['sadness'],
-            emotion_score_previous_statement['disgust'],
-            emotion_score_previous_statement['joy'],
-
-            emotion_score_first_response['fear'],
-            emotion_score_first_response['anger'],
-            emotion_score_first_response['anticipation'],
-            emotion_score_first_response['trust'],
-            emotion_score_first_response['surprise'],
-            emotion_score_first_response['positive'],
-            emotion_score_first_response['negative'],
-            emotion_score_first_response['sadness'],
-            emotion_score_first_response['disgust'],
-            emotion_score_first_response['joy']
-        ])
-        train_all_docs_sentiment.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
-
-            score_second_response['neg'],
-            score_second_response['neu'],
-            score_second_response['pos'],
-
-            emotion_score_previous_statement['fear'],
-            emotion_score_previous_statement['anger'],
-            emotion_score_previous_statement['anticipation'],
-            emotion_score_previous_statement['trust'],
-            emotion_score_previous_statement['surprise'],
-            emotion_score_previous_statement['positive'],
-            emotion_score_previous_statement['negative'],
-            emotion_score_previous_statement['sadness'],
-            emotion_score_previous_statement['disgust'],
-            emotion_score_previous_statement['joy'],
-
-            emotion_score_second_response['fear'],
-            emotion_score_second_response['anger'],
-            emotion_score_second_response['anticipation'],
-            emotion_score_second_response['trust'],
-            emotion_score_second_response['surprise'],
-            emotion_score_second_response['positive'],
-            emotion_score_second_response['negative'],
-            emotion_score_second_response['sadness'],
-            emotion_score_second_response['disgust'],
-            emotion_score_second_response['joy']
-        ])
-    train_all_docs_sentiment = np.array(train_all_docs_sentiment)
-
-    # Feature extraction for test data
-    for idx, sentence in enumerate(test_ancestor):
-        previous_statement = sentence[len(sentence) - 1]
-        first_response = test_docs[0][idx]
-        second_response = test_docs[1][idx]
-
-        # Calculate sentiment scores
-        score_previous_statement = sentiment_analyzer.polarity_scores(previous_statement)
-        score_first_response = sentiment_analyzer.polarity_scores(first_response)
-        score_second_response = sentiment_analyzer.polarity_scores(second_response)
-
-        # Calculate emotion scores
-        emotion_score_previous_statement = get_emotion_score(get_preprocessed_sentence(previous_statement))
-        emotion_score_first_response = get_emotion_score(get_preprocessed_sentence(first_response))
-        emotion_score_second_response = get_emotion_score(get_preprocessed_sentence(second_response))
-
-        # Treat the sentiment results (values of neg, neu, pos) as learning features
-        test_all_docs_sentiment.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
-
-            score_first_response['neg'],
-            score_first_response['neu'],
-            score_first_response['pos'],
-
-            emotion_score_previous_statement['fear'],
-            emotion_score_previous_statement['anger'],
-            emotion_score_previous_statement['anticipation'],
-            emotion_score_previous_statement['trust'],
-            emotion_score_previous_statement['surprise'],
-            emotion_score_previous_statement['positive'],
-            emotion_score_previous_statement['negative'],
-            emotion_score_previous_statement['sadness'],
-            emotion_score_previous_statement['disgust'],
-            emotion_score_previous_statement['joy'],
-
-            emotion_score_first_response['fear'],
-            emotion_score_first_response['anger'],
-            emotion_score_first_response['anticipation'],
-            emotion_score_first_response['trust'],
-            emotion_score_first_response['surprise'],
-            emotion_score_first_response['positive'],
-            emotion_score_first_response['negative'],
-            emotion_score_first_response['sadness'],
-            emotion_score_first_response['disgust'],
-            emotion_score_first_response['joy']
-        ])
-        test_all_docs_sentiment.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
-
-            score_second_response['neg'],
-            score_second_response['neu'],
-            score_second_response['pos'],
-
-            emotion_score_previous_statement['fear'],
-            emotion_score_previous_statement['anger'],
-            emotion_score_previous_statement['anticipation'],
-            emotion_score_previous_statement['trust'],
-            emotion_score_previous_statement['surprise'],
-            emotion_score_previous_statement['positive'],
-            emotion_score_previous_statement['negative'],
-            emotion_score_previous_statement['sadness'],
-            emotion_score_previous_statement['disgust'],
-            emotion_score_previous_statement['joy'],
-
-            emotion_score_second_response['fear'],
-            emotion_score_second_response['anger'],
-            emotion_score_second_response['anticipation'],
-            emotion_score_second_response['trust'],
-            emotion_score_second_response['surprise'],
-            emotion_score_second_response['positive'],
-            emotion_score_second_response['negative'],
-            emotion_score_second_response['sadness'],
-            emotion_score_second_response['disgust'],
-            emotion_score_second_response['joy']
-        ])
-    test_all_docs_sentiment = np.array(test_all_docs_sentiment)
+    # Feature extraction for train and test data
+    train_all_docs_sentiment = get_extracted_features(train_ancestor, train_docs)
+    test_all_docs_sentiment = get_extracted_features(test_ancestor, test_docs)
 
     # Evaluate this classifier on all responses.
     print('Evaluate the classifier on all responses')
@@ -243,6 +85,89 @@ def main():
     y_predict = gnb.predict(test_all_docs_sentiment)
     print('GaussianNB accuracy: ', metrics.accuracy_score(test_all_labels, y_predict))
     print('GaussianNB f-1 score: ', metrics.f1_score(test_all_labels, y_predict))
+
+def get_extracted_features(ancestors, response_docs):
+    result = []
+    sentiment_analyzer = SentimentIntensityAnalyzer()
+    for idx, sentence in enumerate(ancestors):
+        previous_statement = sentence[len(sentence) - 1]
+        first_response = response_docs[0][idx]
+        second_response = response_docs[1][idx]
+
+        # Calculate sentiment scores
+        score_previous_statement = sentiment_analyzer.polarity_scores(previous_statement)
+        score_first_response = sentiment_analyzer.polarity_scores(first_response)
+        score_second_response = sentiment_analyzer.polarity_scores(second_response)
+
+        # Calculate emotion scores
+        emotion_score_previous_statement = get_emotion_score(get_preprocessed_sentence(previous_statement))
+        emotion_score_first_response = get_emotion_score(get_preprocessed_sentence(first_response))
+        emotion_score_second_response = get_emotion_score(get_preprocessed_sentence(second_response))
+
+        # Treat the sentiment results (values of neg, neu, pos) as learning features
+        result.append([
+            score_previous_statement['neg'],
+            score_previous_statement['neu'],
+            score_previous_statement['pos'],
+
+            score_first_response['neg'],
+            score_first_response['neu'],
+            score_first_response['pos'],
+
+            emotion_score_previous_statement['fear'],
+            emotion_score_previous_statement['anger'],
+            emotion_score_previous_statement['anticipation'],
+            emotion_score_previous_statement['trust'],
+            emotion_score_previous_statement['surprise'],
+            emotion_score_previous_statement['positive'],
+            emotion_score_previous_statement['negative'],
+            emotion_score_previous_statement['sadness'],
+            emotion_score_previous_statement['disgust'],
+            emotion_score_previous_statement['joy'],
+
+            emotion_score_first_response['fear'],
+            emotion_score_first_response['anger'],
+            emotion_score_first_response['anticipation'],
+            emotion_score_first_response['trust'],
+            emotion_score_first_response['surprise'],
+            emotion_score_first_response['positive'],
+            emotion_score_first_response['negative'],
+            emotion_score_first_response['sadness'],
+            emotion_score_first_response['disgust'],
+            emotion_score_first_response['joy']
+        ])
+        result.append([
+            score_previous_statement['neg'],
+            score_previous_statement['neu'],
+            score_previous_statement['pos'],
+
+            score_second_response['neg'],
+            score_second_response['neu'],
+            score_second_response['pos'],
+
+            emotion_score_previous_statement['fear'],
+            emotion_score_previous_statement['anger'],
+            emotion_score_previous_statement['anticipation'],
+            emotion_score_previous_statement['trust'],
+            emotion_score_previous_statement['surprise'],
+            emotion_score_previous_statement['positive'],
+            emotion_score_previous_statement['negative'],
+            emotion_score_previous_statement['sadness'],
+            emotion_score_previous_statement['disgust'],
+            emotion_score_previous_statement['joy'],
+
+            emotion_score_second_response['fear'],
+            emotion_score_second_response['anger'],
+            emotion_score_second_response['anticipation'],
+            emotion_score_second_response['trust'],
+            emotion_score_second_response['surprise'],
+            emotion_score_second_response['positive'],
+            emotion_score_second_response['negative'],
+            emotion_score_second_response['sadness'],
+            emotion_score_second_response['disgust'],
+            emotion_score_second_response['joy']
+        ])
+    return np.array(result)
 
 def get_preprocessed_sentence(sentence):
     return lemmatize(list(split_on_punctuation(sentence)))
