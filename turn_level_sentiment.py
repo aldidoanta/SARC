@@ -1,5 +1,6 @@
 import nltk
 import numpy as np
+import feature_visualization
 nltk.download('vader_lexicon')
 
 from eval import *
@@ -53,6 +54,9 @@ def extract_sentiment(train_file, test_file, comment_file):
     # Feature extraction for train and test data, using sentiment analysis (VADER) and emotional affect (NRCLex)
     train_all_docs_sentiment = get_extracted_features(train_ancestor, train_docs)
     test_all_docs_sentiment = get_extracted_features(test_ancestor, test_docs)
+
+    # plot the sentiment features
+    feature_visualization.plot_sentiment_features(train_all_docs_sentiment, train_all_labels)
 
     # Evaluate this classifier on all responses.
     clf = LogitCV(Cs=[10**i for i in range(-2, 3)], fit_intercept=False, cv=2, dual=np.less(*train_all_docs_sentiment.shape), solver='liblinear', n_jobs=-1, random_state=0)
