@@ -90,24 +90,24 @@ def get_extracted_features(ancestors, response_docs):
         second_response = response_docs[1][idx]
 
         # Calculate sentiment scores
-        score_previous_statement = sentiment_analyzer.polarity_scores(previous_statement)
-        score_first_response = sentiment_analyzer.polarity_scores(first_response)
-        score_second_response = sentiment_analyzer.polarity_scores(second_response)
+        sentiment_score_previous_statement = sentiment_analyzer.polarity_scores(previous_statement)
+        sentiment_score_first_response = sentiment_analyzer.polarity_scores(first_response)
+        sentiment_score_second_response = sentiment_analyzer.polarity_scores(second_response)
 
         # Calculate emotion scores
         emotion_score_previous_statement = get_emotion_score(get_preprocessed_sentence(previous_statement))
         emotion_score_first_response = get_emotion_score(get_preprocessed_sentence(first_response))
         emotion_score_second_response = get_emotion_score(get_preprocessed_sentence(second_response))
 
-        # Treat the sentiment results (values of neg, neu, pos) as learning features
+        # Treat all the scores as features
         result.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
+            sentiment_score_previous_statement['neg'],
+            sentiment_score_previous_statement['neu'],
+            sentiment_score_previous_statement['pos'],
 
-            score_first_response['neg'],
-            score_first_response['neu'],
-            score_first_response['pos'],
+            sentiment_score_first_response['neg'],
+            sentiment_score_first_response['neu'],
+            sentiment_score_first_response['pos'],
 
             emotion_score_previous_statement['fear'],
             emotion_score_previous_statement['anger'],
@@ -132,13 +132,13 @@ def get_extracted_features(ancestors, response_docs):
             emotion_score_first_response['joy']
         ])
         result.append([
-            score_previous_statement['neg'],
-            score_previous_statement['neu'],
-            score_previous_statement['pos'],
+            sentiment_score_previous_statement['neg'],
+            sentiment_score_previous_statement['neu'],
+            sentiment_score_previous_statement['pos'],
 
-            score_second_response['neg'],
-            score_second_response['neu'],
-            score_second_response['pos'],
+            sentiment_score_second_response['neg'],
+            sentiment_score_second_response['neu'],
+            sentiment_score_second_response['pos'],
 
             emotion_score_previous_statement['fear'],
             emotion_score_previous_statement['anger'],
