@@ -22,8 +22,10 @@ def main():
     test_file = SARC+'test-balanced.csv'
     comment_file = SARC+'comments.json'
 
+    extract_sentiment(train_file, test_file, comment_file)
+
+def extract_sentiment(train_file, test_file, comment_file):
     # Load SARC pol/main sequences with labels.
-    print('Load SARC data')
     train_seqs, test_seqs, train_labels, test_labels = \
         load_sarc_responses(train_file, test_file, comment_file, lower=False)
     
@@ -78,6 +80,7 @@ def main():
     gnb = naive_bayes.GaussianNB()
     gnb.fit(train_all_docs_sentiment, train_all_labels)
     y_predict = gnb.predict(test_all_docs_sentiment)
+
     print('GaussianNB accuracy: ', metrics.accuracy_score(test_all_labels, y_predict))
     print('GaussianNB f-1 score: ', metrics.f1_score(test_all_labels, y_predict))
 
@@ -186,5 +189,3 @@ def get_emotion_score(sentence):
         'disgust': emo_count['disgust']/n_word,
         'joy': emo_count['joy']/n_word
     }
-
-main()
