@@ -112,13 +112,15 @@ def get_extracted_features(ancestors, response_docs):
 
         # Treat all the scores as features
         result.append([
-            sentiment_score_previous_statement['neg'],
-            sentiment_score_previous_statement['neu'],
-            sentiment_score_previous_statement['pos'],
+            sentiment_score_previous_statement['compound'],
+            # sentiment_score_previous_statement['neg'],
+            # sentiment_score_previous_statement['neu'],
+            # sentiment_score_previous_statement['pos'],
 
-            sentiment_score_first_response['neg'],
-            sentiment_score_first_response['neu'],
-            sentiment_score_first_response['pos'],
+            sentiment_score_first_response['compound'],
+            # sentiment_score_first_response['neg'],
+            # sentiment_score_first_response['neu'],
+            # sentiment_score_first_response['pos'],
 
             emotion_score_previous_statement['fear'],
             emotion_score_previous_statement['anger'],
@@ -143,13 +145,15 @@ def get_extracted_features(ancestors, response_docs):
             emotion_score_first_response['joy']
         ])
         result.append([
-            sentiment_score_previous_statement['neg'],
-            sentiment_score_previous_statement['neu'],
-            sentiment_score_previous_statement['pos'],
+            sentiment_score_previous_statement['compound'],
+            # sentiment_score_previous_statement['neg'],
+            # sentiment_score_previous_statement['neu'],
+            # sentiment_score_previous_statement['pos'],
 
-            sentiment_score_second_response['neg'],
-            sentiment_score_second_response['neu'],
-            sentiment_score_second_response['pos'],
+            sentiment_score_second_response['compound'],
+            # sentiment_score_second_response['neg'],
+            # sentiment_score_second_response['neu'],
+            # sentiment_score_second_response['pos'],
 
             emotion_score_previous_statement['fear'],
             emotion_score_previous_statement['anger'],
